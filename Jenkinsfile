@@ -20,9 +20,6 @@ pipeline {
                 }
             }
         }
-    
-            }
-        }
         
         stage('Push Images to Docker Hub') {
                 steps {
