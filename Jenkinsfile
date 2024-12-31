@@ -5,6 +5,7 @@ pipeline {
     }
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        IMAGE_NAME_SERVER = ’rihemb/devops’
     }
     stages {
         stage('Checkout') {
@@ -12,14 +13,10 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Rihembkhaled/projet-devops'
             }
         }
-        stage('Pull Image') {
+        stage ( ’ Build Server Image ’) {
             steps {
-                dir('server') {
-                    script {
-                        withDockerRegistry([credentialsId: DOCKERHUB_CREDENTIALS, url: 'https://index.docker.io/v1/']) {
-                            dockerImage = docker.pull("rihemb/devops")
-                        }
-                    }
+                script {
+                    dockerImageServer = docker.build("${IMAGE_NAME_SERVER}")
                 }
             }
         }
@@ -29,12 +26,24 @@ pipeline {
                     sh """
                     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                     aquasec/trivy:latest image --exit-code 0 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                    rihemb/devops
+                    ${IMAGE_NAME_SERVER}
                     """
                 }
             }
         }
     }
+
+    stage('Push Images to Docker Hub') {
+                steps {
+                    script {
+                        docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
+                            dockerImageServer.push()
+                        }
+                    }
+                }
+            }
+
+
     post {
         always {
             echo 'Cleaning up...'
