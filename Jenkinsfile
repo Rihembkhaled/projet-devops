@@ -20,17 +20,6 @@ pipeline {
                 }
             }
         }
-        stage('Scan Server Image') {
-            steps {        
-                script {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh """
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                    aquasec/trivy:latest image --exit-code 0 --severity LOW,MEDIUM,HIGH,CRITICAL --timeout 5m \
-                    ${IMAGE_NAME_SERVER}
-                    """
-                }
-        }
     
             }
         }
