@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-        IMAGE_NAME_SERVER = ’rihemb/devops’
+        IMAGE_NAME_SERVER = 'rihemb/devops'
     }
     stages {
         stage('Checkout') {
@@ -13,7 +13,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Rihembkhaled/projet-devops'
             }
         }
-        stage ( ’ Build Server Image ’) {
+        stage ( 'Build Server Image') {
             steps {
                 script {
                     dockerImageServer = docker.build("${IMAGE_NAME_SERVER}")
@@ -42,7 +42,6 @@ pipeline {
                     }
                 }
             }
-
 
     post {
         always {
