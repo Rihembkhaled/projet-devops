@@ -16,7 +16,7 @@ pipeline {
             steps {
                 dir('server') {
                     script {
-                        docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
+                        withDockerRegistry([credentialsId: DOCKERHUB_CREDENTIALS, url: 'https://index.docker.io/v1/']) {
                             dockerImage = docker.pull("rihemb/devops")
                         }
                     }
