@@ -16,7 +16,7 @@ pipeline {
         stage ( 'Build Server Image') {
             steps {
                 script {
-                    dockerImageServer = docker.build("${IMAGE_NAME_SERVER}")
+                    dockerImageServer = docker.build("${IMAGE_NAME_SERVER}")// docker build -t rihemb/devops .
                 }
             }
         }
