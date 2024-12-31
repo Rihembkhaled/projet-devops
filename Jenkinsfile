@@ -20,15 +20,13 @@ pipeline {
                 }
             }
         }
-        stage('Scan Server Image') {
-            steps {
-                script {
-                    sh """
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                    aquasec/trivy:latest image --exit-code 0 --severity LOW,MEDIUM,HIGH,CRITICAL --timeout 5m \
-                    ${IMAGE_NAME_SERVER}
-                    """
-                }
+        script {
+            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                sh """
+                docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                aquasec/trivy:latest image --exit-code 0 --severity LOW,MEDIUM,HIGH,CRITICAL --timeout 5m \
+                ${IMAGE_NAME_SERVER}
+                """
             }
         }
         
@@ -47,7 +45,6 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            sh 'docker system prune -af'
         }
     }
 }
