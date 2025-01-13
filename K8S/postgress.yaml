@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-spring
+  labels:
+    app: postgres-spring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-spring
+  template:
+    metadata:
+      labels:
+        app: postgres-spring
+    spec:
+      containers:
+      - name: postgres-spring
+        image: postgres:15
+        env:
+        - name: POSTGRES_USER
+          value: "root"
+        - name: POSTGRES_PASSWORD
+          value: "root_password"
+        - name: POSTGRES_DB
+          value: "spring"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-spring
+  labels:
+    app: postgres-spring
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres-spring
